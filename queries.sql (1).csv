@@ -1,0 +1,34 @@
+"SELECT CONCAT(e.first_name, ' ', e.last_name) AS name, COUNT(s.sales_id) AS operations, SUM(p.price * s.quantity) AS income
+FROM employees e
+JOIN sales s ON e.employee_id = s.sales_person_id
+JOIN products p ON s.product_id = p.product_id
+GROUP BY e.employee_id
+ORDER BY income DESC
+LIMIT 10;","Для составления отчета о десяти лучших продавцах по суммарной выручке продаж необходимо сджоинить таблицы ""employees"", ""sales"" и ""products"" по соответствующим. Затем вычислить суммарную выручку и количество проведенных сделок для каждого продавца. В итоге, результаты отсортировать по убыванию выручки.
+
+"
+"SELECT CONCAT(e.first_name, ' ', e.last_name) AS name, ROUND(AVG(p.price), 0) AS average_income
+FROM employees e
+JOIN sales s ON e.employee_id = s.sales_person_id
+JOIN products p ON s.product_id = p.product_id
+GROUP BY e.employee_id, e.first_name, e.last_name
+HAVING AVG(p.price) < (
+    SELECT AVG(price)
+    FROM products
+)
+ORDER BY average_income ASC;","Этот запрос соединяет таблицы ""employees"", ""sales"" и ""products"" через JOIN. Мы группируем данные по работникам и вычисляем среднюю выручку за сделку для каждого работника. Затем мы выбираем только тех продавцов, у которых средняя выручка за сделку меньше средней выручки по всем продавцам. Сортируем по возрастанию средней выручки.
+"
+"SELECT
+    CONCAT(e.first_name, ' ', e.last_name) AS name,
+    to_char(s.sale_date, 'Day') AS weekday,
+    ROUND(SUM(p.price * s.quantity)) AS income
+FROM
+    sales s
+    JOIN employees e ON s.sales_person_id = e.employee_id
+    JOIN products p ON s.product_id = p.product_id
+GROUP BY
+    e.employee_id,
+    s.sale_date
+ORDER BY
+    EXTRACT(DOW FROM s.sale_date),
+    name;","Этот запрос джоинит три таблицы sales, employees и products, группирует данные по employee_id и sale_date, а затем сортирует результаты сначала по порядковому номеру дня недели и затем по имени продавца (name)."
